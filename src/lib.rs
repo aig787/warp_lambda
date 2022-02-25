@@ -11,6 +11,7 @@ use lambda_http::{
     lambda_runtime, Adapter, Body as LambdaBody, Error as LambdaError, Request, RequestExt,
     Response, Service,
 };
+use log::info;
 use mime::Mime;
 use once_cell::sync::Lazy;
 use std::collections::HashSet;
@@ -119,6 +120,12 @@ where
         let query_params = req.query_string_parameters();
 
         let (mut parts, body) = req.into_parts();
+        info!(
+            "Got request {} {} with parameters: {:?}",
+            parts.method,
+            parts.uri.path(),
+            query_params
+        );
         let body = match body {
             LambdaBody::Empty => WarpBody::empty(),
             LambdaBody::Text(t) => WarpBody::from(t.into_bytes()),
